@@ -9,6 +9,7 @@ import (
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
 
 type Tracer struct {
+	Dummy         bool
 	EmailHost     string
 	EmailPort     string
 	EmailUsername string
@@ -58,17 +59,21 @@ func (self Tracer) Notify(extra ...func() string) {
 }
 
 func (self Tracer) sendException(stack *ErrorStack) {
-	log.Println(stack.Traceback)
+	if self.Dummy {
+		log.Println("Dummy Exception Handler")
+		log.Println(stack.Traceback)
+	} else {
+		log.Println("Sending Exception: " + stack.Subject)
+		connection := MakeConn(&self)
+		connection.SenderName += " Exception"
 
-	connection := MakeConn(&self)
-	connection.SenderName += " Exception"
-
-	connection.SendEmail(Message{
-		self.EmailFrom,
-		[]string{self.ErrorTo},
-		stack.Subject,
-		ErrorTemplate(stack),
-	})
+		connection.SendEmail(Message{
+			self.EmailFrom,
+			[]string{self.ErrorTo},
+			stack.Subject,
+			ErrorTemplate(stack),
+		})
+	}
 }
 
 type ErrorStack struct {
