@@ -60,7 +60,7 @@ func (self Tracer) Notify(extra ...func() string) {
 
 func (self Tracer) sendException(stack *ErrorStack) {
 	if self.Dummy {
-		log.Println("Dummy Exception Handler")
+		log.Println(stack.Subject)
 		log.Println(stack.Traceback)
 	} else {
 		log.Println("Sending Exception: " + stack.Subject)
