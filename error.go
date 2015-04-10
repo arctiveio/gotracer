@@ -19,7 +19,7 @@ type Tracer struct {
 	ErrorTo       string
 }
 
-func (self Tracer) Notify(extra ...func() string) {
+func (self Tracer) Notify(extra ...func(reason string) string) {
 	err := recover()
 	if err != nil {
 		const size = 4096
@@ -45,7 +45,7 @@ func (self Tracer) Notify(extra ...func() string) {
 		extras := ""
 
 		for i := range extra {
-			extras += extra[i]()
+			extras += extra[i](exc_message)
 			extras += " "
 		}
 
