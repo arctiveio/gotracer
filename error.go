@@ -59,7 +59,12 @@ func (self Tracer) Notify(extra ...func(reason string) string) {
 }
 
 func (self Tracer) sendException(stack *ErrorStack) {
-	if self.Dummy {
+	Dummy := self.Dummy
+	if self.EmailHost == "" || self.EmailPassword == "" {
+		Dummy = true
+	}
+
+	if Dummy {
 		log.Println(stack.Subject)
 		log.Println(stack.Traceback)
 	} else {
